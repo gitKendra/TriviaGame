@@ -9,15 +9,27 @@ $(function() {
 	let showAnswer; // variable for timer
 
 
-	// Array to store trivia objects
-	let list = [];
+	// // Array to store trivia objects
+	// let list = [];
 
-	// Objects
-	list[0] = {
-		vquestion: "Will this work?",
-		answers: ["yes", "no"],
-		answer: "no",
-	};
+	// // Objects
+	// list[0] = {
+	// 	question: "Will this work?",
+	// 	answers: ["yes", "no"],
+	// 	answer: "no",
+	// };
+	var trivia = {
+		"q1": {
+			question: ,
+			answers: ,
+			answer: ,
+		},
+		"q2": {
+			question: ,
+			answers: ,
+			answer: ,			
+		}
+	}
 
 	$("#btnStart").click(startGame);
 
