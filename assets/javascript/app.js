@@ -4,7 +4,7 @@ $(function() {
 	let wrong = 0;
 	let correct = 0;
 	// unanswered will be the array size - (wrong + correct);
-	let index = 0;
+	let index = -1;
 	let showTrivia; // variable for setInterval
 	let showAnswer; // variable for new question setInterval
 	let timer; // variable for setInterval timer
@@ -49,41 +49,33 @@ $(function() {
 		answer: "Dominique (The Singing Nun)",
 		fact: "The surprise hit featured Sister Luc-Gabrielle singing in French about her Dominican order."
 	};
-	// var trivia = {
-	// 	"q1": {
-	// 		question: "Will this work?",
-	// 		answers: ["yes", "no"],
-	// 		answer: "no",
-	// 	},
-	// 	"q2": {
-	// 		question: "What is your name?",
-	// 		answers: ["Billy", "Joe", "Bob", "Sally"],
-	// 		answer: 2,			
-	// 	}
-	// }
 
-	$("#btnStart").click(startGame);
+	$("#btnStart").click(loadQuestion);
 	$("#btnRestart").click(resetGame);
 
-	function startGame() {
-console.log("start game");		
-		// Change HTML elements
-		var contents = "<p>Time remaining: <span id=\"time\"></span> seconds.</p>" +
-			"<section id=\"question\"></section>" + 
-			"<section id=\"answers\"></section>";
-		$("#main-content").html(contents);
-		loadQuestion();
-	//	showTrivia = setInterval(loadQuestion, countdown * 1000);	
-	}
+// 	function startGame() {
+// console.log("start game");		
+// 		// Change HTML elements
+// 		// var contents = "<p>Time remaining: <span id=\"time\"></span> seconds.</p>";
+// 		// $("#time").html(contents);
+// 		// var contents = "<p>Time remaining: <span id=\"time\"></span> seconds.</p>" +
+// 		// 	"<section id=\"question\"></section>" + 
+// 		// 	"<section id=\"answers\"></section>";
+// 		// $("#main-content").html(contents);
+// 		loadQuestion();
+// 	//	showTrivia = setInterval(loadQuestion, countdown * 1000);	
+// 	}
 
 	// Loads the current question to the DOM
 	function loadQuestion() {
-console.log("loadQuestion");		
+console.log("loadQuestion");
+		index++;		
 		if(index < list.length){
 //console.log("index "+index+" < "+list.length+" list.length");
 			// Clear values
 			clearInterval(showTrivia);
 			clearInterval(timer);
+			$("#time").empty();
 			$("#question").empty();
 			$("#answers").empty();
 
@@ -93,9 +85,8 @@ console.log("loadQuestion");
 
 			// Set intervals
 			countdown = 30;
-			showAnswer = setInterval(loadAnswer, countdown * 1000);
-			timer = setInterval(countdownTimer, 1000);
-			index++;
+			// showAnswer = setInterval(loadAnswer, countdown * 1000);
+			// timer = setInterval(countdownTimer, 1000);
 		}
 		else {
 			endGame();
@@ -108,20 +99,21 @@ console.log("loadQuestion");
 	// Update triva game with answer page
 	function loadAnswer() {
 console.log("loadAnswer");		
-		// Check if answer is correct
-		if(list[index].answer == guess){
-			$("#question").html("Correct!");
-			correct++;
-		}
-		// increment correct or incorrect variable
-		else {
-			$("#question").html("Wrong!");
-			wrong++;
-		}
+		// // Check if answer is correct
+		// if(list[index].answer == guess){
+		// 	$("#question").html("Correct!");
+		// 	correct++;
+		// }
+		// // increment correct or incorrect variable
+		// else {
+		// 	$("#question").html("Wrong!");
+		// 	wrong++;
+		// }
 
 		// Clear values
 		clearInterval(showAnswer);
 		clearInterval(timer);
+		$("#time").empty();
 		$("#question").empty();
 		$("#answers").empty();
 
@@ -131,29 +123,52 @@ console.log("loadAnswer");
 
 		// Set intervals
 		countdown = 5;
-		timer = setInterval(countdownTimer, 1000);
-		showTrivia = setInterval(loadQuestion, countdown * 1000);
-
+		// timer = setInterval(countdownTimer, 1000);
+		// showTrivia = setInterval(loadQuestion, countdown * 1000);
 	}
 
 	// Creates and returns the buttons for multiple choice
 	function createBtns(arr) {
+		// creat list for button.
 console.log("createBtns");		
 		for(var i = 0; i < arr.length; i++) {
 			var btn = $("<button>");
-			btn.addClass("button choice");
+			btn.addClass("btn button-default");
+			btn.addClass("choice");
 			btn.attr("type", "button");
 			btn.val(i);
 			btn.html(list[index].choices[i]);
 			$("#answers").append(btn);
 		}
 	}
+	function checkAnswer() {
+console.log("checkAnswer() ");
+console.log("button value: "+$(this).text()+" === "+list[index].answer);
+		var result;
+		// Determine if correct answer
+		if($(this).text() === list[index].answer){
+			correct++;
+			result = "<h2>Correct!</h2>";
+		}
+		else {
+			wrong++;
+			result = "<h2>Incorrect!</h2>";
+		}
+		// Update HTML
+		$("#question").html(result);
+		// Load the answer page
+		loadAnswer();
+}
+
+	// use event delegation for dynamic buttons
+	$("#answers").on("click", checkAnswer);
+	$("#answers").on("click", "button", checkAnswer);
 
 	// Starts the timer for each question based on the time argument input
 	function countdownTimer() {
 //console.log("countdownTimer");	
 		countdown--;	
-		$("#time").html(countdown);
+		$("#time").html("<h2>Time remaining: " + countdown + "</h2>");
 		
 	}
 
@@ -170,10 +185,11 @@ console.log("resetGame");
 		// reset varaibles
 		wrong = 0;
 		correct = 0;
-		index = 0;
+		index = -1;
 		// update html
 		$("#main-content").empty();
 		startGame();
 
 	}
+
 });
