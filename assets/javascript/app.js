@@ -6,58 +6,174 @@ $(function() {
 	// unanswered will be the array size - (wrong + correct);
 	let index = 0;
 	let showTrivia; // variable for setInterval
-	let showAnswer; // variable for timer
+	let showAnswer; // variable for new question setInterval
+	let timer; // variable for setInterval timer
+	let countdown;
+	let guess;
+	// Array to store trivia objects
+	let list = [];
 
-
-	// // Array to store trivia objects
-	// let list = [];
-
-	// // Objects
-	// list[0] = {
-	// 	question: "Will this work?",
-	// 	answers: ["yes", "no"],
-	// 	answer: "no",
-	// };
-	var trivia = {
-		"q1": {
-			question: ,
-			answers: ,
-			answer: ,
-		},
-		"q2": {
-			question: ,
-			answers: ,
-			answer: ,			
-		}
-	}
+	// Objects
+	list[0] = {
+		question: "There are 8 bits in 1 byte.",
+		choices: ["True", "False"],
+		answer: "True",
+		fact: "The 256 unique combinations of 8 on/off bits in one byte are often used to "+
+			"encode common letters or symbols in computer software",
+	};
+	list[1] = {
+		question: "Which was not one of the original 13 states?",
+		choices: ["Pennsylvania", "New Hampshire", "Georgia", "Vermont"],
+		answer: "Vermont",
+		fact: "The original 13 states were Deleware, Pennsylvania, New Jersey, Georgia, Connecticut "+
+			"Massachusetts, Maryland, South Carolina, New Hampshire, Virginia, New York, North Carolina "+
+			"and Rhode Island."			
+	};
+	list[2] = {
+		question: "What is the definition of proscribe?",
+		choices: ["prohibit, forbid", "to order", "authorize the use of", "professional calligrapher"],
+		answer: "prohibit, forbid",
+		fact: "Proscribe is from the Latin proscribere, to post a person's name as an outlaw."
+	};
+	list[3] = {
+		question: "Wall Street got its name from a wall built to keep hogs from running loose on Manhattan.",
+		choices: ["True", "False"],
+		answer: "False",
+		fact: "Despite claims to the contrary by the National Pork Producers Council, the wall was built "+
+			"in 1653 by the Dutch to guard against British and Native American attacks.",
+	};
+	list[4] = {
+		question: "The Kingsmen's version of \"Louie Louie\" reached number two on the Billboard Top Ten in January 1964. "+
+			"What song kept it from hitting number one?",
+		choices: ["Ticket to Ride (The Beatles)", "Moon River (Henry Mancini)", "Wooly Bully (Sam the Sham & the Pharaohs)", "Dominique (The Singing Nun)"],
+		answer: "Dominique (The Singing Nun)",
+		fact: "The surprise hit featured Sister Luc-Gabrielle singing in French about her Dominican order."
+	};
+	// var trivia = {
+	// 	"q1": {
+	// 		question: "Will this work?",
+	// 		answers: ["yes", "no"],
+	// 		answer: "no",
+	// 	},
+	// 	"q2": {
+	// 		question: "What is your name?",
+	// 		answers: ["Billy", "Joe", "Bob", "Sally"],
+	// 		answer: 2,			
+	// 	}
+	// }
 
 	$("#btnStart").click(startGame);
+	$("#btnRestart").click(resetGame);
 
 	function startGame() {
+console.log("start game");		
 		// Change HTML elements
-		var contents = "<h2>Time remaining: <span id=\"time\"></span>" +
+		var contents = "<p>Time remaining: <span id=\"time\"></span> seconds.</p>" +
 			"<section id=\"question\"></section>" + 
 			"<section id=\"answers\"></section>";
 		$("#main-content").html(contents);
 		loadQuestion();
-		showTrivia = setInterval(loadQuestion, 30 * 1000);		
+	//	showTrivia = setInterval(loadQuestion, countdown * 1000);	
 	}
 
 	// Loads the current question to the DOM
 	function loadQuestion() {
-		//TODO: load question to html
-		$("#question").html(list[index].question);
-		//TODO: Create and load answer buttons to html
-		var multipleChoice = createBtns(list[index].answers);
-		
+console.log("loadQuestion");		
+		if(index < list.length){
+//console.log("index "+index+" < "+list.length+" list.length");
+			// Clear values
+			clearInterval(showTrivia);
+			clearInterval(timer);
+			$("#question").empty();
+			$("#answers").empty();
 
-		index++;
+			// Update html elements
+			$("#question").html(list[index].question);
+			createBtns(list[index].choices);
+
+			// Set intervals
+			countdown = 30;
+			showAnswer = setInterval(loadAnswer, countdown * 1000);
+			timer = setInterval(countdownTimer, 1000);
+			index++;
+		}
+		else {
+			endGame();
+		}
+	}
+
+// on click button from multiple choice
+// check if correct. loadAnswer and update $("#question").html("Correct");
+
+	// Update triva game with answer page
+	function loadAnswer() {
+console.log("loadAnswer");		
+		// Check if answer is correct
+		if(list[index].answer == guess){
+			$("#question").html("Correct!");
+			correct++;
+		}
+		// increment correct or incorrect variable
+		else {
+			$("#question").html("Wrong!");
+			wrong++;
+		}
+
+		// Clear values
+		clearInterval(showAnswer);
+		clearInterval(timer);
+		$("#question").empty();
+		$("#answers").empty();
+
+		//Update html elements
+		
+		$("#answers").html(list[index].answer + " - " + list[index].fact);
+
+		// Set intervals
+		countdown = 5;
+		timer = setInterval(countdownTimer, 1000);
+		showTrivia = setInterval(loadQuestion, countdown * 1000);
+
 	}
 
 	// Creates and returns the buttons for multiple choice
 	function createBtns(arr) {
+console.log("createBtns");		
 		for(var i = 0; i < arr.length; i++) {
-
+			var btn = $("<button>");
+			btn.addClass("button choice");
+			btn.attr("type", "button");
+			btn.val(i);
+			btn.html(list[index].choices[i]);
+			$("#answers").append(btn);
 		}
+	}
+
+	// Starts the timer for each question based on the time argument input
+	function countdownTimer() {
+//console.log("countdownTimer");	
+		countdown--;	
+		$("#time").html(countdown);
+		
+	}
+
+	// Goes to end game results
+	function endGame() {
+console.log("endGame");		
+		$("#main-content").empty();
+
+	}
+
+	// resets variables to re-play the game
+	function resetGame() {
+console.log("resetGame");		
+		// reset varaibles
+		wrong = 0;
+		correct = 0;
+		index = 0;
+		// update html
+		$("#main-content").empty();
+		startGame();
+
 	}
 });
