@@ -1,17 +1,22 @@
 // Handler for .ready() called
 $(function() {
+
+	//*** VARIABLES ***\\
+
 	const TRIVIA_TIME = 30;
 	const ANSWER_TIME = 7;
+
 	let wrong = 0;
 	let correct = 0;
-	// unanswered will be the array size - (wrong + correct);
 	let index = -1;
-	let showTrivia; // variable for setInterval
-	let showAnswer; // variable for new question setInterval
-	let timer; // variable for setInterval timer
-	let countdown;
-	let guess;
 	let result = false;
+	let countdown;
+
+	// setInterval variables
+	let showTrivia;
+	let showAnswer;
+	let timer;
+	
 	// Array to store trivia objects
 	let list = [];
 
@@ -52,16 +57,32 @@ $(function() {
 		fact: "The surprise hit featured Sister Luc-Gabrielle singing in French about her Dominican order."
 	};
 
-	$("#btnStart").click(loadQuestion);
-	$("#btnRestart").click(resetGame);
 
-	// Loads the current question to the DOM
+	//*** BUTTONS ***\\
+
+	$("#btnStart").click(loadQuestion);
+
+	// Create onclick to handle dynamically added buttons
+	$("#main-content").on("click", "button", function(){
+		console.log("button id " + $(this).text());
+		if($(this).text() === "Play Again"){
+			resetGame();
+		}
+		else{
+			checkAnswer($(this));
+		}
+	});
+
+
+	//*** FUNCTIONS ***\\
+
+	// Function that loads the current question to the DOM
 	function loadQuestion() {
-console.log("loadQuestion");
 
 		index++;	
 		countdown = TRIVIA_TIME;	
 
+		// Only play if there is another question available
 		if(index < list.length){
 			// Clear values
 			clearInterval(showTrivia);
@@ -82,11 +103,11 @@ console.log("loadQuestion");
 		}
 	}
 
-	// Update triva game with answer page
+	// Function updates HTML with the answer
 	function loadAnswer() {
-console.log("loadAnswer");		
 		
 		countdown = ANSWER_TIME;
+
 		// Set result if user didn't answer and time ran out
 		if (result === false){
 			result = "No answer chosen."
@@ -101,7 +122,7 @@ console.log("loadAnswer");
 		$("#question").html("<h3>" + result + "</h3>");
 		$("#answers").html("<b>" + list[index].answer + "</b> - " + list[index].fact);
 
-		// reset result in case user time's out
+		// reset result in case timer ran out
 		result = false;
 
 		// Set intervals
@@ -109,10 +130,8 @@ console.log("loadAnswer");
 		showTrivia = setInterval(loadQuestion, countdown * 1000);
 	}
 
-	// Creates and returns the buttons for multiple choice
+	// Function creates and places the buttons for multiple choice onto HTML
 	function createBtns(arr) {
-		// creat list for button.
-console.log("createBtns");		
 		for(var i = 0; i < arr.length; i++) {
 			var btn = $("<button>");
 			btn.addClass("btn button-default");
@@ -124,13 +143,11 @@ console.log("createBtns");
 		}
 	}
 
-	// Sets the result variable based on user guess	
-	function checkAnswer() {
-console.log("checkAnswer() ");
-console.log("button text: "+$(this).text()+" === "+list[index].answer);
+	// Function determines if user guessed correct answer	
+	function checkAnswer(obj) {
 		
 		// Determine if correct answer
-		if($(this).text() === list[index].answer){
+		if(obj.text() === list[index].answer){
 			correct++;
 			result = "Correct!";
 		}
@@ -138,56 +155,54 @@ console.log("button text: "+$(this).text()+" === "+list[index].answer);
 			wrong++;
 			result = "Incorrect!";
 		}
-
-		// Load the answer page
 		loadAnswer();
 }
 
-	// use event delegation for dynamic buttons
-//	$("#answers").on("click", checkAnswer);
-	$("#answers").on("click", "button", checkAnswer);
-
-	// Starts the timer for each question based on the time argument input
+	// Function that shows the timer
 	function countdownTimer() {
 		countdown--;	
 		$("#time").html("<p>Time remaining: " + countdown + " seconds.</p>");
 	}
 
-	// Goes to end game results
+	// Function to view end game results
 	function endGame() {
-console.log("endGame");	
+
+		// Stop intervals
+		clearInterval(showTrivia);
 		clearInterval(showAnswer);
 		clearInterval(timer);	
-		clearContent();
-
+		
+		// Set variables
 		let unanswered = list.length - (correct + wrong);
-		// update html with game stats
 		let stats = "<p>Correct: " + correct + "</p>" +
 					"<p>Incorrect: " + wrong + "</p>" +
 					"<p>Unanswered: " + unanswered + "</p>"
 		;
 		let btn = "<button type='button' id='btnRestart'>Play Again</button>"
+
+		// Update HTML
+		clearContent();
 		$("#time").html("<u><h3>Final Score</h3></u>");
 		$("#question").html(stats);
 		$("#answers").html(btn);
-		// Play again button
 	}
 
-	// Resets variables to re-play the game
+	// Function that resets variables for game replay
 	function resetGame() {
-console.log("resetGame");		
+		
 		// reset varaibles
 		wrong = 0;
 		correct = 0;
 		index = -1;
-		// update html
+		
+		// Update HTML
 		clearContent();
 
-		// start game
+		// Restart game
 		loadQuestion();
 	}
 
-	// Clears the content inside the main-content id
+	// Function that clears the main-content id of HTML
 	function clearContent() {
 		$("#time").empty();
 		$("#question").empty();
