@@ -1,18 +1,43 @@
 body {
-	background-color: black;
 	text-align: center;
-/*	background: url(../images/bg_cranium.jpg);
-	background-position: cover;*/
+	background: url(../images/bg_cranium.jpg);
+	background-position: center;
+  background-size: auto 100%;
+ 	background-repeat: no-repeat;
+ 	background-attachment:fixed;
+ 	background-color: #000;
+ 	font-family: 'Fredoka One', cursive;
 }
 
-.main-container {
-	background-color: white;
+.page-header {
+ 	background: rgb(0,0,0);
+  background: rgba(0,0,0, 0.7);
+  color: #fff;
+	padding: 5px;
+}
+
+.main-content {
+	position: relative;
 	padding: 20px;
-	max-width: 768px;
-	max-height: 600px;
 }
 
-.btn {
-	margin: auto;
-	margin-bottom: 10px;
+.bg-color {
+	background: rgb(255,255,255);
+  background: rgba(255,255,255, 0.9);
+}
+
+#time,
+#question,
+#answers {
+	padding: 10px;
+} 
+
+#question p {
+	font-weight: bold;
+	font-size: 20px;
+}
+
+.choice {
+	position: relative;
+	margin: 3px;
 }

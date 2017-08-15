@@ -64,7 +64,6 @@ $(function() {
 
 	// Create onclick to handle dynamically added buttons
 	$("#main-content").on("click", "button", function(){
-		console.log("button id " + $(this).text());
 		if($(this).text() === "Play Again"){
 			resetGame();
 		}
@@ -91,7 +90,7 @@ $(function() {
 
 			// Update html elements
 			$("#time").html("<p>Time remaining: " + countdown + " seconds.</p>");
-			$("#question").html("<h3>" + list[index].question + "</h3>");
+			$("#question").html("<p>" + list[index].question + "</p>");
 			createBtns(list[index].choices);
 
 			// Set intervals
@@ -119,7 +118,7 @@ $(function() {
 
 		//Update html elements
 		$("#time").html("<p>Time remaining: " + countdown + " seconds.</p>");
-		$("#question").html("<h3>" + result + "</h3>");
+		$("#question").html("<p>" + result + "</p>");
 		$("#answers").html("<b>" + list[index].answer + "</b> - " + list[index].fact);
 
 		// reset result in case timer ran out
@@ -134,7 +133,7 @@ $(function() {
 	function createBtns(arr) {
 		for(var i = 0; i < arr.length; i++) {
 			var btn = $("<button>");
-			btn.addClass("btn button-default");
+			btn.addClass("btn btn-warning");
 			btn.addClass("choice");
 			btn.attr("type", "button");
 			btn.val(i);
@@ -178,7 +177,7 @@ $(function() {
 					"<p>Incorrect: " + wrong + "</p>" +
 					"<p>Unanswered: " + unanswered + "</p>"
 		;
-		let btn = "<button type='button' id='btnRestart'>Play Again</button>"
+		let btn = "<button class='btn btn-danger' type='button' id='btnRestart'>Play Again</button>"
 
 		// Update HTML
 		clearContent();
